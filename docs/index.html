@@ -152,59 +152,36 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // 이 GitHub 리포지토리의 raw.githubusercontent.com 경로를 사용합니다.
-        const repoOwner = "kmb07";
-        const repoName = "ragtest";
-        const branch = "main"; // GitHub Pages가 배포되는 브랜치 (main 또는 master)
-        const pathToPdfs = "docs"; // PDF 파일들이 직접 들어있는 폴더 (docs)
-
-        const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${pathToPdfs}`;
-        //const githubPagesUrlBase = `https://${repoOwner}.github.io/${repoName}/${pathToPdfs}/`;//
-        const githubPagesUrlBase = `https://${repoOwner}.github.io/${repoName}/`;
-
         const pdfListDiv = document.getElementById("pdf-list");
 
-        fetch(githubApiUrl, {
-          headers: {
-            Accept: "application/vnd.github.v3+json",
-          },
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`GitHub API 요청 실패: ${response.statusText}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            pdfListDiv.innerHTML = ""; // 로딩 메시지 제거
+        // PDF 파일 목록 (docs 폴더에 있는 파일들)
+        const pdfFiles = [
+          "kosha2000_003_004.pdf",
+          "kosha2000_005_006.pdf"
+        ];
 
-            const pdfFiles = data.filter((item) => item.type === "file" && item.name.toLowerCase().endsWith(".pdf"));
+        pdfListDiv.innerHTML = ""; // 로딩 메시지 제거
 
-            if (pdfFiles.length === 0) {
-              pdfListDiv.innerHTML = '<p class="loading-message">이 폴더에 PDF 파일이 없습니다.</p>';
-              return;
-            }
+        if (pdfFiles.length === 0) {
+          pdfListDiv.innerHTML = '<p class="loading-message">이 폴더에 PDF 파일이 없습니다.</p>';
+          return;
+        }
 
-            let html = '<div class="file-list-section"><h2>모든 보고서</h2><ul>';
-            const fileIconSvg = `
-                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2ZM18 20V9H13V4H6V20H18ZM13 15C13 14.4477 13.4477 14 14 14H16V16H14C13.4477 16 13 15.5523 13 15ZM14 17C14 16.4477 13.4477 16 13 16H8C7.44772 16 7 16.4477 7 17C7 17.5523 7.44772 18 8 18H13C13.4477 18 14 17.5523 14 17ZM14 12C14 11.4477 13.4477 11 13 11H8C7.44772 11 7 11.4477 7 12C7 12.5523 7.44772 13 8 13H13C13.4477 13 14 12.5523 14 12Z"/>
-                    </svg>`;
+        let html = '<div class="file-list-section"><h2>모든 보고서</h2><ul>';
+        const fileIconSvg = `
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2ZM18 20V9H13V4H6V20H18ZM13 15C13 14.4477 13.4477 14 14 14H16V16H14C13.4477 16 13 15.5523 13 15ZM14 17C14 16.4477 13.4477 16 13 16H8C7.44772 16 7 16.4477 7 17C7 17.5523 7.44772 18 8 18H13C13.4477 18 14 17.5523 14 17ZM14 12C14 11.4477 13.4477 11 13 11H8C7.44772 11 7 11.4477 7 12C7 12.5523 7.44772 13 8 13H13C13.4477 13 14 12.5523 14 12Z"/>
+                </svg>`;
 
-            // 파일명을 기준으로 정렬 (알파벳 순서)
-            pdfFiles.sort((a, b) => a.name.localeCompare(b.name));
+        // 파일명을 기준으로 정렬 (알파벳 순서)
+        pdfFiles.sort((a, b) => a.localeCompare(b));
 
-            pdfFiles.forEach((file) => {
-              const fileUrl = `${githubPagesUrlBase}${file.name}`;
-              html += `<li><span class="file-icon">${fileIconSvg}</span><a href="${fileUrl}" target="_blank">${file.name}</a></li>`;
-            });
-            html += `</ul></div>`;
-            pdfListDiv.innerHTML = html;
-          })
-          .catch((error) => {
-            console.error("PDF 목록을 가져오는 중 오류 발생:", error);
-            pdfListDiv.innerHTML = `<p class="error-message">PDF 파일 목록을 불러오는 데 실패했습니다. GitHub API 접근 권한 또는 경로를 확인해주세요.</p>`;
-          });
+        pdfFiles.forEach((fileName) => {
+          const fileUrl = `./${fileName}`;
+          html += `<li><span class="file-icon">${fileIconSvg}</span><a href="${fileUrl}" target="_blank">${fileName}</a></li>`;
+        });
+        html += `</ul></div>`;
+        pdfListDiv.innerHTML = html;
       });
     </script>
   </body>
